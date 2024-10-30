@@ -23,6 +23,13 @@ let lockBoard = false;
 */
 function initGame() {
     // Write your code here
+    resetBoard();
+    document.getElementById('game-board').innerHTML = '';
+    cards = [...symbols, ...symbols];
+    shuffleArray(cards);
+    cards.forEach(symbol => {
+        createCard(symbol);
+    });
 
     document.getElementById('restart-btn').addEventListener('click', initGame);
 }
@@ -34,6 +41,12 @@ function initGame() {
 */
 function createCard(symbol) {
     // Write your code here
+    const cardElement = document.createElement('div');
+    cardElement.classList.add('card');
+    cardElement.dataset.symbol = symbol;
+    document.getElementById('game-board').appendChild(cardElement);   
+    cards.push(cardElement);
+    cardElement.addEventListener('click', flipCard);
 }
 
 /*
@@ -44,10 +57,19 @@ function createCard(symbol) {
     If it's the second, then set the secondCard variable to it. Also, if that's the second card, then you 
     want to check for a match using the checkForMatch() function. 
 */
-function flipCard(card) {
+function flipCard(event) {
+    const card = event.target;
     // If the board is supposed to be locked or you picked the same card you already picked
     if (lockBoard || card === firstCard) return;
     // Write your code here
+    card.classList.add('flipped');
+    card.textContent = card.dataset.symbol;
+    if (firstCard === null) {
+        firstCard = card;
+    } else {
+        secondCard = card;
+        checkForMatch();
+    }
 }
 
 /* 
@@ -57,6 +79,11 @@ function flipCard(card) {
 */
 function checkForMatch() {
     // Write your code here
+    if (firstCard.dataset.symbol === secondCard.dataset.symbol) {
+        disableCards();
+    } else {
+        unflipCards();
+    }
 }
 
 /* 
@@ -66,6 +93,9 @@ function checkForMatch() {
 */
 function disableCards() {
     // Write your code here
+    firstCard.classList.add('matched');
+    secondCard.classList.add('matched');
+    resetBoard();
 }
  
 /* ---------------------  Everything under has already been done for you -------------------------- */
